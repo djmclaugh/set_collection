@@ -1,0 +1,6 @@
+Managed to get the pixi.d.ts file with help from https://www.html5gamedevs.com/topic/45819-cant-find-module-pixijs-in-typescript-53-and-typescript/
+"
+You can get the types from an npm CDN (unpkg, jsdelivr, etc). For example:
+https://unpkg.com/pixi.js@5.3.0/pixi.js.d.ts
+https://cdn.jsdelivr.net/npm/pixi.js@5.3.0/pixi.js.d.ts
+"
