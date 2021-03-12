@@ -8,7 +8,10 @@ import SetView from "./set_view.js";
 const H = 720;
 const W = 720;
 
+type SetCallback = (set: ZFCSet) => void;
+
 export default class Collection extends View {
+  private callbacks: SetCallback[] = [];
   // Discovered sets in order of discovery.
   private discovered: string[] = [];
   private skinsDiscovered: Map<string, ZFCSet[]> = new Map();
@@ -26,6 +29,11 @@ export default class Collection extends View {
       const v = new SetView(set);
       this.setViews.set(setID, v);
       v.setInteractiable();
+      v.onSelect((set: ZFCSet) => {
+        for (let cb of this.callbacks) {
+          cb(set);
+        }
+      });
       this.add(v);
       this.reposition();
     }
@@ -45,4 +53,10 @@ export default class Collection extends View {
       v.y = 80 + 100 * Math.floor(i/2);
     }
   }
+
+  public onSelect(cb: SetCallback) {
+    this.callbacks.push(cb);
+  }
+
+
 }

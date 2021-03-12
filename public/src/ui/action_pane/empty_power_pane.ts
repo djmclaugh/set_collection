@@ -14,7 +14,7 @@ export default class EmptyPowerPane extends View {
   constructor() {
     super();
     const t = newTextField("Press the button to unlock the empty set.", W - 80);
-    t.x = 40;
+    t.x = (W - t.width) / 2;
     t.y = 100;
     this.container.addChild(t);
 

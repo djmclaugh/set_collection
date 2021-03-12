@@ -9,7 +9,10 @@ import {
   isPower,
 } from "../game/set_definition.js";
 
+type SetCallback = (set: ZFCSet) => void;
+
 export default class SetView extends View {
+  private callbacks: SetCallback[] = [];
   private set: ZFCSet;
   private background: PIXI.Graphics = new PIXI.Graphics();
   private selected: boolean = false;
@@ -69,7 +72,9 @@ export default class SetView extends View {
   public setInteractiable() {
     this.container.interactive = true;
     this.container.on("click", () => {
-      this.select(true);
+      for (let cb of this.callbacks) {
+        cb(this.set);
+      }
     });
     this.container.on("pointerover", () => {
       this.select(true);
@@ -102,5 +107,9 @@ export default class SetView extends View {
 
   public xCenter() {
     return this.originalWidth / 2;
+  }
+
+  public onSelect(cb: SetCallback) {
+    this.callbacks.push(cb);
   }
 }

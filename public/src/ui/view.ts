@@ -28,6 +28,11 @@ export default class View {
     this.container.addChild(v.container);
   }
 
+  public remove(v: View) {
+    this.children.splice(this.children.indexOf(v), 1);
+    this.container.removeChild(v.container);
+  }
+
   public tick(delta: number) {
     for (let v of this.children.filter(c => c.needsAnimation)) {
       v.tick(delta);

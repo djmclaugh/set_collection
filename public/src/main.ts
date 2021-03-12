@@ -26,7 +26,7 @@ divider.lineStyle(1, 0x000000, 1);
 divider.moveTo(720, 0);
 divider.lineTo(720, 720);
 
-c.discoverSet(p);
+// c.discoverSet(p);
 c.x = 0;
 c.y = 0;
 
@@ -36,13 +36,17 @@ r.onDiscover((set: ZFCSet) => {
   c.discoverSet(set);
 });
 
+c.onSelect((set: ZFCSet) => {
+  r.select(set);
+});
+
 app.stage.addChild(c.container);
 app.stage.addChild(r.container);
 app.stage.addChild(divider);
 
-c.discoverSet(pp1);
-c.discoverSet(pp2);
-c.discoverSet(pp3);
+// c.discoverSet(pp1);
+// c.discoverSet(pp2);
+// c.discoverSet(pp3);
 
 
 

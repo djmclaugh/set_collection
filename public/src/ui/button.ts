@@ -43,7 +43,7 @@ export default class Button extends View {
       this.update();
     });
     this.container.on("mouseup", () => {
-      if (this.mousedown) {
+      if (this.mousedown && !this.disabled) {
         for (let cb of this.callbacks) {
           cb();
         }
@@ -54,7 +54,7 @@ export default class Button extends View {
   }
 
   public setDisabled(disabled: boolean) {
-    this.disabled = true;
+    this.disabled = disabled;
     this.update();
   }
 
@@ -65,7 +65,9 @@ export default class Button extends View {
   private update() {
     this.background.clear();
     let colour = 0xFFFFFF;
-    if (this.mouseover) {
+    if (this.disabled) {
+      colour = 0x808080;
+    } else if (this.mouseover) {
       colour = 0xCFCFCF;
       if (this.mousedown) {
         colour = 0xAFAFAF;
