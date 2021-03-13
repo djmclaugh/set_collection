@@ -1,6 +1,6 @@
 import type * as pixijs from "pixi.js";
 
-import ZFCSet from "../../game/zfcset.js";
+import ZFCSet from "../../game/sets/zfcset.js";
 
 import Button from "../button.js";
 import View from "../view.js";

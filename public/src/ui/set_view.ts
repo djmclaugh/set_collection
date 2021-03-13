@@ -2,12 +2,8 @@ import type * as pixijs from "pixi.js";
 
 import View from "./view.js";
 import { newText } from "./text.js";
-import ZFCSet from "../game/zfcset.js";
-import {
-  isExtensional,
-  isSetBuilder,
-  isPower,
-} from "../game/set_definition.js";
+import ZFCSet from "../game/sets/zfcset.js";
+import { SetDefinitionType } from "../game/sets/set_definition.js";
 
 type SetCallback = (set: ZFCSet) => void;
 
@@ -24,8 +20,7 @@ export default class SetView extends View {
     super();
     this.set = set;
     this.container.addChild(this.background);
-
-    if (isExtensional(this.set.definition)) {
+    if (set.finiteList !== undefined) {
       const l = newText("{", 60);
       const r = newText("}", 60);
       let x = 0;
@@ -33,7 +28,7 @@ export default class SetView extends View {
       this.container.addChild(l);
       x += l.width + 2;
       this.container.addChild(r);
-      for (let s of this.set.definition.elements) {
+      for (let s of set.finiteList) {
         const sv = new SetView(s);
         sv.container.scale.x = 0.8;
         sv.container.scale.y = 0.8;
@@ -43,7 +38,7 @@ export default class SetView extends View {
         x += sv.container.width + 16;
         this.elementViews.push(sv);
       }
-      if (this.set.definition.elements.length > 0) {
+      if (set.finiteList.length > 0) {
         x -= 14;
       }
       r.x = x;
@@ -84,7 +79,7 @@ export default class SetView extends View {
     });
   }
 
-  public setChildrenInteractiable() {
+  public setChildrenInteractable() {
     this.container.interactive = true;
     for (let sv of this.elementViews) {
       sv.setInteractiable();

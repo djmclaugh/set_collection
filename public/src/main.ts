@@ -3,21 +3,23 @@ import type * as pixijs from "pixi.js";
 import { newText } from "./ui/text.js"
 import Collection from "./ui/collection.js"
 import RightPane from "./ui/right_pane.js"
-import ZFCSet from "./game/zfcset.js"
+import SetDefinition from "./game/sets/set_definition.js"
+import ZFCSet from "./game/sets/zfcset.js"
 
 const app = new PIXI.Application({width: 1280, height: 720});
 app.renderer.backgroundColor = 0xFFFFFF;
 document.body.getElementsByTagName('main').item(0)!.appendChild(app.view);
 app.view.onselectstart = function () { return false; }
 
-const p = ZFCSet.pair(ZFCSet.EMPTY);
-const p1 = ZFCSet.pair(p);
-const p2 = ZFCSet.pair(p1);
-const p3 = ZFCSet.pair(p2);
-const pp1 = ZFCSet.pair(p);
-const pp2 = ZFCSet.pair(ZFCSet.EMPTY, pp1);
-const pp3 = ZFCSet.pair(ZFCSet.EMPTY, pp2);
-const pp4 = ZFCSet.pair(ZFCSet.EMPTY, pp3);
+const empty = ZFCSet.getSet(SetDefinition.empty());
+const p = ZFCSet.nest(empty);
+const p1 = ZFCSet.nest(p);
+const p2 = ZFCSet.nest(p1);
+const p3 = ZFCSet.nest(p2);
+const pp1 = ZFCSet.nest(p);
+const pp2 = ZFCSet.pair(empty, pp1);
+const pp3 = ZFCSet.pair(empty, pp2);
+const pp4 = ZFCSet.pair(empty, pp3);
 const pp5 = ZFCSet.pair(pp4, pp3);
 
 const c = new Collection();

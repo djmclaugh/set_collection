@@ -1,4 +1,4 @@
-import ZFCSet from "./zfcset.js"
+import ZFCSet from "./sets/zfcset.js"
 
 export default class FOLFormula {
   public formula: string = "";

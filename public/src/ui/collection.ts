@@ -1,6 +1,6 @@
 import type * as pixijs from "pixi.js";
 
-import ZFCSet from "../game/zfcset.js";
+import ZFCSet from "../game/sets/zfcset.js";
 
 import View from "./view.js";
 import SetView from "./set_view.js";
@@ -13,19 +13,16 @@ type SetCallback = (set: ZFCSet) => void;
 export default class Collection extends View {
   private callbacks: SetCallback[] = [];
   // Discovered sets in order of discovery.
-  private discovered: string[] = [];
-  private skinsDiscovered: Map<string, ZFCSet[]> = new Map();
-  private setViews: Map<string, SetView> = new Map();
+  private discovered: number[] = [];
+  private setViews: Map<number, SetView> = new Map();
 
   public discoverSet(set: ZFCSet) {
     const setID = set.getId();
     let alreadyDiscovered = (this.discovered.indexOf(setID) !== -1);
     if (alreadyDiscovered) {
-      const alreadyDiscoveredSkins = this.skinsDiscovered.get(setID)!;
-      alreadyDiscoveredSkins.push(set);
+      // Do nothing
     } else {
       this.discovered.push(setID);
-      this.skinsDiscovered.set(setID, [set]);
       const v = new SetView(set);
       this.setViews.set(setID, v);
       v.setInteractiable();

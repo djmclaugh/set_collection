@@ -1,13 +1,13 @@
 import type * as pixijs from "pixi.js";
 
-import ZFCSet from "../game/zfcset.js";
+import ZFCSet from "../game/sets/zfcset.js";
 
 import View from "./view.js";
 import { newText } from "./text.js";
 import Button from "./button.js";
-import EmptyPowerPane from "./action_pane/empty_power_pane.js";
-import NestingPowerPane from "./action_pane/nesting_power_pane.js";
-import PairingPowerPane from "./action_pane/pairing_power_pane.js";
+import ButtonRow from "./button_row.js";
+import ActionPane from "./action_pane/action_pane.js";
+import ViewPane from "./view_pane/view_pane.js";
 
 const W = 560;
 const H = 720;
@@ -16,83 +16,80 @@ type DiscoverCallback = (set: ZFCSet) => void;
 
 export default class RightPane extends View {
   discoverCallbacks: DiscoverCallback[] = [];
-  private actionPane: EmptyPowerPane|NestingPowerPane|PairingPowerPane = new EmptyPowerPane();
+  private actionPane: ActionPane = new ActionPane();
+  private viewPane: ViewPane = new ViewPane();
+  private viewButtonRow: ButtonRow;
+  private powerButtonRow: ButtonRow;
 
   constructor() {
     super();
-    const b = new Button("Powers");
-    b.x = 100;
-    b.y = H - b.container.height - 12;
-    this.add(b);
-
-    const emptyButton = new Button("Empty Set");
-    emptyButton.x = 20;
-    emptyButton.y = H - emptyButton.container.height - 88;
-    emptyButton.onClick(() => {
-      this.remove(this.actionPane);
-      this.actionPane = new EmptyPowerPane();
-      this.actionPane.onClick(() => {
-        for (let cb of this.discoverCallbacks) {
-          cb(ZFCSet.EMPTY);
-        }
-      });
-      this.add(this.actionPane);
+    const powersButton = new Button("Powers");
+    powersButton.x = 160;
+    powersButton.y = H - powersButton.container.height - 12;
+    powersButton.onClick(() => {
+      this.actionPane.container.visible = true;
+      this.viewPane.container.visible = false;
+      this.powerButtonRow.container.visible = true;
+      this.viewButtonRow.container.visible = false;
     });
-    this.add(emptyButton);
+    this.add(powersButton);
 
-    const nestButton = new Button("Nesting");
-    nestButton.x = 220;
-    nestButton.y = H - nestButton.container.height - 88;
-    nestButton.onClick(() => {
-      this.remove(this.actionPane);
-      this.actionPane = new NestingPowerPane();
-      this.actionPane.onClick((set: ZFCSet) => {
-        for (let cb of this.discoverCallbacks) {
-          cb(set);
-        }
-      });
-      this.add(this.actionPane);
+    const viewButton = new Button("View");
+    viewButton.x = 20;
+    viewButton.y = H - viewButton.container.height - 12;
+    viewButton.onClick(() => {
+      this.actionPane.container.visible = false;
+      this.viewPane.container.visible = true;
+      this.powerButtonRow.container.visible = false;
+      this.viewButtonRow.container.visible = true;
     });
-    this.add(nestButton);
+    this.add(viewButton);
 
-    const pairButton = new Button("Pairing");
-    pairButton.x = 380;
-    pairButton.y = H - pairButton.container.height - 88;
-    pairButton.onClick(() => {
-      this.remove(this.actionPane);
-      this.actionPane = new PairingPowerPane();
-      this.actionPane.onClick((set: ZFCSet) => {
-        for (let cb of this.discoverCallbacks) {
-          cb(set);
-        }
-      });
-      this.add(this.actionPane);
+    this.viewButtonRow = new ButtonRow(["Back", "Info", "???"]);
+    this.viewButtonRow.on("Back", () => {
+      this.actionPane.showEmptyPower();
     });
-    this.add(pairButton);
+    this.viewButtonRow.x = 10;
+    this.viewButtonRow.y = H - this.viewButtonRow.container.height - 88;
+    this.viewButtonRow.container.visible = false;
+    this.add(this.viewButtonRow);
 
-    this.actionPane.onClick(() => {
-      for (let cb of this.discoverCallbacks) {
-        cb(ZFCSet.EMPTY);
-      }
+    this.powerButtonRow = new ButtonRow(["Empty Set", "Nesting", "Pairing", "Union"]);
+    this.powerButtonRow.on("Empty Set", () => {
+      this.actionPane.showEmptyPower();
     });
-    this.add(this.actionPane);
+    this.powerButtonRow.on("Nesting", () => {
+      this.actionPane.showNestingPower();
+    });
+    this.powerButtonRow.on("Pairing", () => {
+      this.actionPane.showPairingPower();
+    });
+    this.powerButtonRow.on("Union", () => {
+      this.actionPane.showUnionPower();
+    });
+    this.powerButtonRow.x = 10;
+    this.powerButtonRow.y = H - this.powerButtonRow.container.height - 88;
+    this.add(this.powerButtonRow);
 
     const divider: PIXI.Graphics = new PIXI.Graphics();
     divider.lineStyle(1, 0x000000, 1);
     divider.moveTo(0, W);
     divider.lineTo(W, W);
     this.container.addChild(divider);
+    this.add(this.actionPane);
+    this.viewPane.container.visible = false;
+    this.add(this.viewPane);
   }
 
   public onDiscover(callback: DiscoverCallback) {
-    this.discoverCallbacks.push(callback);
+    this.actionPane.onDiscover(callback);
   }
 
   public select(selection: ZFCSet) {
-    if (this.actionPane instanceof NestingPowerPane) {
-      this.actionPane.setSelection(selection);
-    } else if (this.actionPane instanceof PairingPowerPane) {
-      this.actionPane.setSelection(selection);
+    if (this.actionPane.container.visible) {
+      this.actionPane.select(selection);
+    } else if (this.viewPane.container.visible) {
+      this.viewPane.select(selection);
     }
   }
 }
